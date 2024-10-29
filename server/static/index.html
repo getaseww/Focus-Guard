@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <title>Focus Guard Scheduler</title>
+</head>
+<body class="bg-gray-100 p-5">
+
+<div class="container mx-auto">
+  <h2 class="text-2xl font-bold mb-4">Focus Guard Scheduler</h2>
+
+  <form id="scheduleForm" class="mb-4">
+    <input type="text" id="url" placeholder="URL" class="block w-full mb-2 p-2 border rounded" required>
+    <input type="time" id="startTime" placeholder="Start Time" class="block w-full mb-2 p-2 border rounded" required>
+    <input type="time" id="endTime" placeholder="End Time" class="block w-full mb-2 p-2 border rounded" required>
+    <input type="number" id="dayOfWeek" placeholder="Day of Week (0 for Sunday, etc.)" class="block w-full mb-2 p-2 border rounded" required>
+    <button type="submit" class="bg-blue-500 text-white p-2 rounded">Add Schedule</button>
+  </form>
+
+  <ul id="schedulesList" class="space-y-2"></ul>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
