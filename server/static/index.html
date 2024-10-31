@@ -4,24 +4,87 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
   <title>Focus Guard Scheduler</title>
 </head>
 <body class="bg-gray-100 p-5">
 
 <div class="container mx-auto">
-  <h2 class="text-2xl font-bold mb-4">Focus Guard Scheduler</h2>
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold">Focus Guard Scheduler</h2>
+    <button onclick="openModal()" class="px-4 py-2 bg-blue-500 text-white rounded flex items-center">
+      <i class="fas fa-plus mr-2"></i> Add Website
+    </button>
+  </div>
 
-  <form id="scheduleForm" class="mb-4">
-    <input type="text" id="url" placeholder="URL" class="block w-full mb-2 p-2 border rounded" required>
-    <input type="time" id="startTime" placeholder="Start Time" class="block w-full mb-2 p-2 border rounded" required>
-    <input type="time" id="endTime" placeholder="End Time" class="block w-full mb-2 p-2 border rounded" required>
-    <input type="number" id="dayOfWeek" placeholder="Day of Week (0 for Sunday, etc.)" class="block w-full mb-2 p-2 border rounded" required>
-    <button type="submit" class="bg-blue-500 text-white p-2 rounded">Add Schedule</button>
-  </form>
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    <table class="min-w-full">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Website</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Day</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time Range</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="schedulesList" class="bg-white divide-y divide-gray-200">
+        <!-- Schedule items will be inserted here by JavaScript -->
+      </tbody>
+    </table>
+  </div>
 
-  <ul id="schedulesList" class="space-y-2"></ul>
-</div>
+  <!-- Modal/Popup for adding schedule -->
+  <div id="addScheduleModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+      <h3 class="text-xl font-bold mb-4">Add Blocked Website</h3>
+      
+      <form id="scheduleForm" class="space-y-4" onsubmit="closeModal()">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Website URL</label>
+          <input type="text" id="url" placeholder="Enter website URL" class="mt-1 block w-full p-2 border rounded" required>
+        </div>
 
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Day of Week</label>
+          <select id="dayOfWeek" class="mt-1 block w-full p-2 border rounded" required>
+            <option value="0">Sunday</option>
+            <option value="1">Monday</option>
+            <option value="2">Tuesday</option>
+            <option value="3">Wednesday</option>
+            <option value="4">Thursday</option>
+            <option value="5">Friday</option>
+            <option value="6">Saturday</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Start Time</label>
+            <input type="time" id="startTime" class="mt-1 block w-full p-2 border rounded" style="position: relative; z-index: 100;" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">End Time</label>
+            <input type="time" id="endTime" class="mt-1 block w-full p-2 border rounded" required>
+          </div>
+        </div>
+
+        <div class="flex justify-end space-x-2 mt-4">
+          <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-200 rounded">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">Add Schedule</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<script>
+function openModal() {
+  document.getElementById('addScheduleModal').classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('addScheduleModal').classList.add('hidden');
+}
+</script>
 <script src="app.js"></script>
 </body>
 </html>

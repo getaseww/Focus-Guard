@@ -1,4 +1,4 @@
-package server
+package main
 
 import (
 	"encoding/json"
@@ -7,63 +7,47 @@ import (
 	"net/http"
 )
 
-// SchedulesHandler manages CRUD operations on schedules
-func SchedulesHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		GetSchedules(w)
-	case "POST":
-		CreateSchedule(w, r)
-	case "DELETE":
-		DeleteSchedule(w, r)
-	case "PUT":
-		UpdateSchedule(w, r)
-	default:
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-	}
-}
+// func GetSchedules(w http.ResponseWriter) {
+// 	rows, err := db.DB.Query("SELECT id, url, start_time, end_time, day_of_week FROM schedules")
+// 	if err != nil {
+// 		http.Error(w, err.Error(), http.StatusInternalServerError)
+// 		return
+// 	}
+// 	defer rows.Close()
 
-func GetSchedules(w http.ResponseWriter) {
-	rows, err := db.DB.Query("SELECT id, url, start_time, end_time, day_of_week FROM schedules")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	defer rows.Close()
+// 	var schedules []schedule.Schedule
+// 	for rows.Next() {
+// 		var s schedule.Schedule
+// 		if err := rows.Scan(&s.ID, &s.URL, &s.StartTime, &s.EndTime, &s.DayOfWeek); err != nil {
+// 			http.Error(w, err.Error(), http.StatusInternalServerError)
+// 			return
+// 		}
+// 		schedules = append(schedules, s)
+// 	}
+// 	w.Header().Set("Content-Type", "application/json")
+// 	json.NewEncoder(w).Encode(schedules)
+// }
 
-	var schedules []schedule.Schedule
-	for rows.Next() {
-		var s schedule.Schedule
-		if err := rows.Scan(&s.ID, &s.URL, &s.StartTime, &s.EndTime, &s.DayOfWeek); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		schedules = append(schedules, s)
-	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(schedules)
-}
+// func CreateSchedule(w http.ResponseWriter, r *http.Request) {
+// 	var s schedule.Schedule
+// 	if err := json.NewDecoder(r.Body).Decode(&s); err != nil {
+// 		http.Error(w, err.Error(), http.StatusBadRequest)
+// 		return
+// 	}
 
-func CreateSchedule(w http.ResponseWriter, r *http.Request) {
-	var s schedule.Schedule
-	if err := json.NewDecoder(r.Body).Decode(&s); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	result, err := db.DB.Exec(
-		"INSERT INTO schedules (url, start_time, end_time, day_of_week) VALUES (?, ?, ?, ?)",
-		s.URL, s.StartTime, s.EndTime, s.DayOfWeek,
-	)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	id, _ := result.LastInsertId()
-	s.ID = int(id) // Convert int64 to int
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(s)
-}
+// 	result, err := db.DB.Exec(
+// 		"INSERT INTO schedules (url, start_time, end_time, day_of_week) VALUES (?, ?, ?, ?)",
+// 		s.URL, s.StartTime, s.EndTime, s.DayOfWeek,
+// 	)
+// 	if err != nil {
+// 		http.Error(w, err.Error(), http.StatusInternalServerError)
+// 		return
+// 	}
+// 	id, _ := result.LastInsertId()
+// 	s.ID = int(id) // Convert int64 to int
+// 	w.Header().Set("Content-Type", "application/json")
+// 	json.NewEncoder(w).Encode(s)
+// }
 
 func DeleteSchedule(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")

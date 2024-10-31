@@ -1,35 +1,58 @@
 document.getElementById("scheduleForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const url = document.getElementById("url").value;
-    const startTime = document.getElementById("startTime").value;
-    const endTime = document.getElementById("endTime").value;
-    const dayOfWeek = parseInt(document.getElementById("dayOfWeek").value);
+    const start_time = document.getElementById("startTime").value;
+    const end_time = document.getElementById("endTime").value;
+    const day_of_week = parseInt(document.getElementById("dayOfWeek").value);
 
-    await fetch("/api/schedules", {
+    const res=await fetch("/api/schedules", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url, startTime, endTime, dayOfWeek })
+        body: JSON.stringify({ url, start_time, end_time, day_of_week })
     });
-
+    console.log("post reponse",res)
+    
     fetchSchedules();
     e.target.reset();
 });
 
 async function fetchSchedules() {
     const res = await fetch("/api/schedules");
+    console.log("response on fetch",res)
     const schedules = await res.json();
+    console.log("schedules data",schedules);
+    
     const schedulesList = document.getElementById("schedulesList");
-    schedulesList.innerHTML = schedules.map(s => `
-        <li class="p-2 bg-white shadow rounded flex justify-between">
-            <span>${s.url} from ${s.start_time} to ${s.end_time} on day ${s.day_of_week}</span>
-            <button onclick="deleteSchedule(${s.id})" class="text-red-500">Delete</button>
-        </li>
-    `).join("");
+    schedulesList.innerHTML = '';
+    
+    schedules.forEach(s => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-blue-50';
+        
+        tr.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap">${s.URL}</td>
+            <td class="px-6 py-4 whitespace-nowrap">${getDayName(s.day_of_week)}</td>
+            <td class="px-6 py-4 whitespace-nowrap">${s.start_time} - ${s.end_time}</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <button class="text-red-500 hover:text-red-700">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        `;
+        
+        const deleteButton = tr.querySelector('button');
+        deleteButton.addEventListener('click', () => deleteSchedule(s.id));
+        
+        schedulesList.appendChild(tr);
+    });
 }
-
 async function deleteSchedule(id) {
-    await fetch(`/api/schedules/${id}`, { method: "DELETE" });
-    fetchSchedules();
+    const response = await fetch(`/api/schedules?id=${id}`, { method: "DELETE" });
+    if (response.ok) {
+        await fetchSchedules(); // Refetch schedules after successful deletion
+    } else {
+        console.error('Failed to delete schedule:', response.statusText);
+    }
 }
 
 fetchSchedules();

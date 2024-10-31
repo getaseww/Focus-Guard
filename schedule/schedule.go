@@ -45,7 +45,35 @@ func IsBlocked(url string) bool {
 	return rows.Next() // true if there's a matching row
 }
 
-// Update block rules (future expansion for in-memory rule updates)
+// Update block rules by refreshing from database
 func updateBlockRules() {
-	// Example function to update in-memory block list
+	// Get current time
+	now := time.Now()
+
+	// Query all active schedules
+	rows, err := db.DB.Query(`
+		SELECT url FROM schedules 
+		WHERE day_of_week = ? AND start_time <= ? AND end_time >= ?
+	`, int(now.Weekday()), now.Format("15:04"), now.Format("15:04"))
+
+	if err != nil {
+		log.Println("Failed to update block rules:", err)
+		return
+	}
+	defer rows.Close()
+
+	// Log active blocks
+	var activeBlocks []string
+	for rows.Next() {
+		var url string
+		if err := rows.Scan(&url); err != nil {
+			log.Println("Error scanning row:", err)
+			continue
+		}
+		activeBlocks = append(activeBlocks, url)
+	}
+
+	if len(activeBlocks) > 0 {
+		log.Printf("Currently blocked URLs: %v", activeBlocks)
+	}
 }
